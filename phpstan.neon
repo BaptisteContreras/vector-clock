@@ -1,0 +1,11 @@
+parameters:
+	level: max
+	paths:
+		- src
+	checkGenericClassInNonGenericObjectType: false
+	reportUnmatchedIgnoredErrors: false
+	ignoreErrors:
+	    - '#Thrown exceptions in a catch block must bundle the previous exception#'
+
+includes:
+	- phpstan-baseline.neon
