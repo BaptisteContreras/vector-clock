@@ -5,6 +5,7 @@ namespace Dynamophp\VectorClock\Test\Unitary\VectorClock\Async;
 use Dynamophp\VectorClock\AsyncVectorClock;
 use Dynamophp\VectorClock\ClockOrder;
 use PHPUnit\Framework\TestCase;
+
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;

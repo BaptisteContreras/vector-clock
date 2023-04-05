@@ -17,4 +17,14 @@ final class VectorClockFactory
     {
         return new AsyncVectorClock($node);
     }
+
+    /**
+     * @throws InvalidNodeNameException
+     * @throws InvalidVectorClockStateException
+     * @throws NumericNodeNameException
+     */
+    public static function createSyncClock(string $node): SyncVectorClock
+    {
+        return new SyncVectorClock($node);
+    }
 }

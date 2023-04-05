@@ -2,29 +2,10 @@
 
 namespace Dynamophp\VectorClock;
 
-use Dynamophp\VectorClock\Exception\InvalidNodeNameException;
-use Dynamophp\VectorClock\Exception\InvalidVectorClockStateException;
-use Dynamophp\VectorClock\Exception\NumericNodeNameException;
 use Dynamophp\VectorClock\Exception\UnComparableException;
 
-class AsyncVectorClock
+class AsyncVectorClock extends AbstractVectorClock
 {
-    /**
-     * @param array<string, LogicalTimestamp> $timestampMap
-     *
-     * @throws NumericNodeNameException
-     * @throws InvalidNodeNameException
-     * @throws InvalidVectorClockStateException
-     */
-    public function __construct(private readonly string $node, private array $timestampMap = [])
-    {
-        if (!isset($this->timestampMap[$this->node])) {
-            $this->timestampMap[$this->node] = LogicalTimestamp::init();
-        }
-
-        $this->validateInitialState();
-    }
-
     public function compare(AsyncVectorClock $clock): ClockOrder
     {
         if (!$this->canBeCompared($clock)) {
@@ -67,6 +48,9 @@ class AsyncVectorClock
         return ClockOrder::IDENTICAL === $comparison;
     }
 
+    /**
+     * @throws UnComparableException
+     */
     public function happenBefore(AsyncVectorClock $clock): bool
     {
         $comparison = $this->compare($clock);
@@ -78,6 +62,9 @@ class AsyncVectorClock
         return ClockOrder::HAPPEN_BEFORE === $comparison;
     }
 
+    /**
+     * @throws UnComparableException
+     */
     public function happenAfter(AsyncVectorClock $clock): bool
     {
         $comparison = $this->compare($clock);
@@ -105,50 +92,9 @@ class AsyncVectorClock
         return $this->canBeCompared($clock);
     }
 
-    public function getNode(): string
-    {
-        return $this->node;
-    }
-
-    /**
-     * @return array<string, LogicalTimestamp>
-     */
-    public function getTimestamps(): array
-    {
-        return $this->timestampMap;
-    }
-
-    /**
-     * @throws InvalidNodeNameException
-     * @throws NumericNodeNameException
-     */
-    public function addNode(string $node): bool
-    {
-        $this->validateNode($node);
-
-        if (!isset($this->timestampMap[$node])) {
-            $this->timestampMap[$node] = LogicalTimestamp::init();
-
-            return true;
-        }
-
-        return false;
-    }
-
     public function hasSameNode(AsyncVectorClock $clock): bool
     {
         return $this->node === $clock->getNode();
-    }
-
-    public function removeNode(string $node): bool
-    {
-        if ($node !== $this->node && isset($this->timestampMap[$node])) {
-            unset($this->timestampMap[$node]);
-
-            return true;
-        }
-
-        return false;
     }
 
     public function applyLocalEvent(): self
@@ -167,6 +113,8 @@ class AsyncVectorClock
 
     public function applyReceiveEvent(AsyncVectorClock $clock): self
     {
+        // TODO throw exception if $clock->getNode() is unknown
+        // TODO throw exception if $clock === $this
         $this->incrementNode();
 
         $this->mergeClock($clock);
@@ -199,52 +147,6 @@ class AsyncVectorClock
         }
 
         return true;
-    }
-
-    /**
-     * @throws InvalidNodeNameException
-     * @throws InvalidVectorClockStateException
-     * @throws NumericNodeNameException
-     */
-    private function validateInitialState(): void
-    {
-        foreach ($this->timestampMap as $node => $timestamp) {
-            $this->validateNode($node);
-
-            if (!$timestamp instanceof LogicalTimestamp) {
-                throw new InvalidVectorClockStateException();
-            }
-        }
-    }
-
-    /**
-     * @throws InvalidNodeNameException
-     * @throws NumericNodeNameException
-     */
-    private function validateNode(mixed $node): void
-    {
-        if (is_numeric($node)) {
-            throw new NumericNodeNameException();
-        }
-
-        if (!is_string($node) || '' === $node) {
-            throw new InvalidNodeNameException();
-        }
-    }
-
-    private function incrementNode(): void
-    {
-        $this->incrementVectorElement($this->node);
-    }
-
-    private function incrementVectorElement(string $node): void
-    {
-        $this->timestampMap[$node] = $this->timestampMap[$node]->increment();
-    }
-
-    private function setVectorElementValue(string $node, int $value): void
-    {
-        $this->timestampMap[$node] = new LogicalTimestamp($value);
     }
 
     private function mergeClock(AsyncVectorClock $clock): void

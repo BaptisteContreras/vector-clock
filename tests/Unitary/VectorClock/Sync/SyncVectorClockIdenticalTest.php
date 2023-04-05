@@ -1,19 +1,19 @@
 <?php
 
-namespace Dynamophp\VectorClock\Test\Unitary\VectorClock\Async;
+namespace Dynamophp\VectorClock\Test\Unitary\VectorClock\Sync;
 
-use Dynamophp\VectorClock\AsyncVectorClock;
 use Dynamophp\VectorClock\ClockOrder;
 use Dynamophp\VectorClock\Exception\UnComparableException;
 use Dynamophp\VectorClock\LogicalTimestamp;
+use Dynamophp\VectorClock\SyncVectorClock;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 use function PHPUnit\Framework\assertTrue;
 
-class AsyncVectorClockIdenticalTest extends AbstractAsyncVectorTest
+class SyncVectorClockIdenticalTest extends AbstractSyncVectorTest
 {
     #[DataProvider('provideIdenticalCases')]
-    public function testCompareIdentical(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
+    public function testCompareIdentical(SyncVectorClock $clock1, SyncVectorClock $clock2): void
     {
         // $clock1 == $clock2 in all our cases
         self::assertEquals(ClockOrder::IDENTICAL, $clock1->compare($clock2));
@@ -21,7 +21,7 @@ class AsyncVectorClockIdenticalTest extends AbstractAsyncVectorTest
     }
 
     #[DataProvider('provideIdenticalCases')]
-    public function testIsIdentical(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
+    public function testIsIdentical(SyncVectorClock $clock1, SyncVectorClock $clock2): void
     {
         // $clock1 == $clock2 in all our cases
         assertTrue($clock1->isIdenticalTo($clock2));
@@ -29,14 +29,14 @@ class AsyncVectorClockIdenticalTest extends AbstractAsyncVectorTest
     }
 
     #[DataProvider('provideNotComparableClocks')]
-    public function testIsIdenticalWithUncomparableClocksThrowException(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
+    public function testIsIdenticalWithUncomparableClocksThrowException(SyncVectorClock $clock1, SyncVectorClock $clock2): void
     {
         $this->expectException(UnComparableException::class);
         $clock1->isIdenticalTo($clock2);
     }
 
     #[DataProvider('provideNotComparableClocks')]
-    public function testIsIdenticalWithUncomparableClocksThrowException2(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
+    public function testIsIdenticalWithUncomparableClocksThrowException2(SyncVectorClock $clock1, SyncVectorClock $clock2): void
     {
         $this->expectException(UnComparableException::class);
         $clock2->isIdenticalTo($clock1);
