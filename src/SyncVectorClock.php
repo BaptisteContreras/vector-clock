@@ -110,44 +110,6 @@ class SyncVectorClock extends AbstractVectorClock
         return $this->node === $clock->getNode();
     }
 
-    public function addNode(string $node): bool
-    {
-        if ($this->isCommunicating()) {
-            return false;
-        }
-
-        return parent::addNode($node);
-    }
-
-    public function removeNode(string $node): bool
-    {
-        if ($this->isCommunicating()) {
-            return false;
-        }
-
-        return parent::removeNode($node);
-    }
-
-    public function getCommunicationState(): SyncClockState
-    {
-        return $this->communicatingNode ? SyncClockState::COMMUNICATING : SyncClockState::IDLE;
-    }
-
-    public function isIdle(): bool
-    {
-        return SyncClockState::IDLE === $this->getCommunicationState();
-    }
-
-    public function isCommunicating(): bool
-    {
-        return SyncClockState::COMMUNICATING === $this->getCommunicationState();
-    }
-
-    public function getCommunicatingNode(): ?string
-    {
-        return $this->communicatingNode;
-    }
-
     /**
      * @throws ClockIsNotIdleException
      */
@@ -203,6 +165,44 @@ class SyncVectorClock extends AbstractVectorClock
         $this->mergeClock($clock);
 
         return $this;
+    }
+
+    public function addNode(string $node): bool
+    {
+        if ($this->isCommunicating()) {
+            return false;
+        }
+
+        return parent::addNode($node);
+    }
+
+    public function removeNode(string $node): bool
+    {
+        if ($this->isCommunicating()) {
+            return false;
+        }
+
+        return parent::removeNode($node);
+    }
+
+    public function getCommunicationState(): SyncClockState
+    {
+        return $this->communicatingNode ? SyncClockState::COMMUNICATING : SyncClockState::IDLE;
+    }
+
+    public function isIdle(): bool
+    {
+        return SyncClockState::IDLE === $this->getCommunicationState();
+    }
+
+    public function isCommunicating(): bool
+    {
+        return SyncClockState::COMMUNICATING === $this->getCommunicationState();
+    }
+
+    public function getCommunicatingNode(): ?string
+    {
+        return $this->communicatingNode;
     }
 
     /**
