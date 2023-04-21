@@ -27,6 +27,11 @@ abstract class AbstractAsyncVectorTest extends TestCase
         return new AsyncVectorClock(self::DEFAULT_NODE_2, $initialContext);
     }
 
+    public static function defaultClock3WithContext(array $initialContext = []): AsyncVectorClock
+    {
+        return new AsyncVectorClock(self::DEFAULT_NODE_3, $initialContext);
+    }
+
     public static function getExpectedResult(int $node1, ?int $node2 = null, ?int $node3 = null): array
     {
         $expected = [self::DEFAULT_NODE => $node1];

@@ -2,11 +2,13 @@
 
 namespace Dynamophp\VectorClock;
 
+use Dynamophp\VectorClock\Exception\CannotReceiveSameClockInstanceException;
 use Dynamophp\VectorClock\Exception\UnComparableException;
+use Dynamophp\VectorClock\Exception\UnknownNodeException;
 
 class AsyncVectorClock extends AbstractVectorClock
 {
-    public function compare(AsyncVectorClock $clock): ClockOrder
+    public function compare(self $clock): ClockOrder
     {
         if (!$this->canBeCompared($clock)) {
             return ClockOrder::NOT_COMPARABLE;
@@ -37,7 +39,7 @@ class AsyncVectorClock extends AbstractVectorClock
     /**
      * @throws UnComparableException
      */
-    public function isIdenticalTo(AsyncVectorClock $clock): bool
+    public function isIdenticalTo(self $clock): bool
     {
         $comparison = $this->compare($clock);
 
@@ -51,7 +53,7 @@ class AsyncVectorClock extends AbstractVectorClock
     /**
      * @throws UnComparableException
      */
-    public function happenBefore(AsyncVectorClock $clock): bool
+    public function happenBefore(self $clock): bool
     {
         $comparison = $this->compare($clock);
 
@@ -65,7 +67,7 @@ class AsyncVectorClock extends AbstractVectorClock
     /**
      * @throws UnComparableException
      */
-    public function happenAfter(AsyncVectorClock $clock): bool
+    public function happenAfter(self $clock): bool
     {
         $comparison = $this->compare($clock);
 
@@ -76,7 +78,7 @@ class AsyncVectorClock extends AbstractVectorClock
         return ClockOrder::HAPPEN_AFTER === $comparison;
     }
 
-    public function isConcurrentWith(AsyncVectorClock $clock): bool
+    public function isConcurrentWith(self $clock): bool
     {
         $comparison = $this->compare($clock);
 
@@ -87,12 +89,12 @@ class AsyncVectorClock extends AbstractVectorClock
         return ClockOrder::CONCURRENT === $comparison;
     }
 
-    public function canBeComparedWith(AsyncVectorClock $clock): bool
+    public function canBeComparedWith(self $clock): bool
     {
         return $this->canBeCompared($clock);
     }
 
-    public function hasSameNode(AsyncVectorClock $clock): bool
+    public function hasSameNode(self $clock): bool
     {
         return $this->node === $clock->getNode();
     }
@@ -111,10 +113,18 @@ class AsyncVectorClock extends AbstractVectorClock
         return $this;
     }
 
-    public function applyReceiveEvent(AsyncVectorClock $clock): self
+    /**
+     * @throws CannotReceiveSameClockInstanceException
+     * @throws UnknownNodeException
+     */
+    public function applyReceiveEvent(self $clock): self
     {
-        // TODO throw exception if $clock->getNode() is unknown
-        // TODO throw exception if $clock === $this
+        if ($this === $clock) {
+            throw new CannotReceiveSameClockInstanceException();
+        }
+
+        $this->ensureNodeIsInVector($clock->getNode());
+
         $this->incrementNode();
 
         $this->mergeClock($clock);
@@ -125,7 +135,7 @@ class AsyncVectorClock extends AbstractVectorClock
     /**
      * Two clocks are comparable if they have the same nodes.
      */
-    private function canBeCompared(AsyncVectorClock $clock): bool
+    private function canBeCompared(self $clock): bool
     {
         $clockTimestamps = $clock->getTimestamps();
 
@@ -149,7 +159,7 @@ class AsyncVectorClock extends AbstractVectorClock
         return true;
     }
 
-    private function mergeClock(AsyncVectorClock $clock): void
+    private function mergeClock(self $clock): void
     {
         $otherTimestampsMap = $clock->getTimestamps();
 

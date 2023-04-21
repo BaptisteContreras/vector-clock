@@ -3,6 +3,8 @@
 namespace Dynamophp\VectorClock\Test\Unitary\VectorClock\Async;
 
 use Dynamophp\VectorClock\AsyncVectorClock;
+use Dynamophp\VectorClock\Exception\CannotReceiveSameClockInstanceException;
+use Dynamophp\VectorClock\Exception\UnknownNodeException;
 use Dynamophp\VectorClock\LogicalTimestamp;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -28,6 +30,22 @@ class AsyncVectorClockReceiveEventTest extends AbstractAsyncVectorTest
         foreach ($beforeClock2Timestamps as $beforeNode => $beforeValue) {
             self::assertEquals($beforeValue, $timestampsClock2[$beforeNode]);
         }
+    }
+
+    #[DataProvider('provideUnknownData')]
+    public function testApplyReceiveEventFailIfNodeIsUnknown(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
+    {
+        $this->expectException(UnknownNodeException::class);
+
+        $clock1->applyReceiveEvent($clock2);
+    }
+
+    #[DataProvider('provideSameInstanceData')]
+    public function testApplyReceiveEventWithSameInstanceWhileIdleFails(AsyncVectorClock $clock): void
+    {
+        $this->expectException(CannotReceiveSameClockInstanceException::class);
+
+        $clock->applyReceiveEvent($clock);
     }
 
     public static function provideReceiveData(): \Generator
@@ -528,6 +546,28 @@ class AsyncVectorClockReceiveEventTest extends AbstractAsyncVectorTest
                 self::DEFAULT_NODE_3 => new LogicalTimestamp(15),
             ]),
             self::getExpectedResult(7, 7),
+        ];
+    }
+
+    public static function provideUnknownData(): \Generator
+    {
+        yield [
+            self::defaultClockWithContext(),
+            self::defaultClock2WithContext(),
+        ];
+        yield [
+            self::defaultClockWithContext([self::DEFAULT_NODE_2 => LogicalTimestamp::init()]),
+            self::defaultClock3WithContext(),
+        ];
+    }
+
+    public static function provideSameInstanceData(): \Generator
+    {
+        yield [
+            self::defaultClockWithContext(),
+        ];
+        yield [
+            self::defaultClockWithContext([self::DEFAULT_NODE_2 => LogicalTimestamp::init()]),
         ];
     }
 }
