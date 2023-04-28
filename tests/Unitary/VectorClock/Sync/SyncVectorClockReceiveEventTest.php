@@ -16,13 +16,13 @@ class SyncVectorClockReceiveEventTest extends AbstractSyncVectorTest
     {
         $beforeClock2Timestamps = $clock2->getTimestamps();
 
-        $this->assertIsIdle($clock1);
-        $this->assertIsIdle($clock2);
+        self::assertIsIdle($clock1);
+        self::assertIsIdle($clock2);
 
         $clock1->applyReceiveEvent($clock2);
 
-        $this->assertIsIdle($clock1);
-        $this->assertIsIdle($clock2);
+        self::assertIsIdle($clock1);
+        self::assertIsIdle($clock2);
 
         $timestamps = $clock1->getTimestamps();
         $timestampsClock2 = $clock2->getTimestamps();
@@ -44,17 +44,17 @@ class SyncVectorClockReceiveEventTest extends AbstractSyncVectorTest
     {
         $beforeClock2Timestamps = $clock2->getTimestamps();
 
-        $this->assertIsIdle($clock1);
-        $this->assertIsIdle($clock2);
+        self::assertIsIdle($clock1);
+        self::assertIsIdle($clock2);
         $clock1->applySendEvent($clock2->getNode());
 
-        $this->assertIsCommunicating($clock1, $clock2->getNode());
-        $this->assertIsIdle($clock2);
+        self::assertIsCommunicating($clock1, $clock2->getNode());
+        self::assertIsIdle($clock2);
 
         $clock1->applyReceiveEvent($clock2);
 
-        $this->assertIsIdle($clock1);
-        $this->assertIsIdle($clock2);
+        self::assertIsIdle($clock1);
+        self::assertIsIdle($clock2);
 
         $timestamps = $clock1->getTimestamps();
         $timestampsClock2 = $clock2->getTimestamps();
@@ -76,14 +76,14 @@ class SyncVectorClockReceiveEventTest extends AbstractSyncVectorTest
     #[DataProvider('provideUnexpectedReceiveData')]
     public function testApplyReceiveEventFailIfNodesMismatch(SyncVectorClock $clock1, string $expectedNode, SyncVectorClock $clock2): void
     {
-        $this->expectException(UnexpectedReceiveEventException::class);
+        self::expectException(UnexpectedReceiveEventException::class);
 
-        $this->assertIsIdle($clock1);
-        $this->assertIsIdle($clock2);
+        self::assertIsIdle($clock1);
+        self::assertIsIdle($clock2);
         $clock1->applySendEvent($expectedNode);
 
-        $this->assertIsCommunicating($clock1, $expectedNode);
-        $this->assertIsIdle($clock2);
+        self::assertIsCommunicating($clock1, $expectedNode);
+        self::assertIsIdle($clock2);
 
         $clock1->applyReceiveEvent($clock2);
     }
@@ -91,10 +91,10 @@ class SyncVectorClockReceiveEventTest extends AbstractSyncVectorTest
     #[DataProvider('provideUnknownData')]
     public function testApplyReceiveEventFailIfNodeIsUnknown(SyncVectorClock $clock1, SyncVectorClock $clock2): void
     {
-        $this->expectException(UnknownNodeException::class);
+        self::expectException(UnknownNodeException::class);
 
-        $this->assertIsIdle($clock1);
-        $this->assertIsIdle($clock2);
+        self::assertIsIdle($clock1);
+        self::assertIsIdle($clock2);
 
         $clock1->applyReceiveEvent($clock2);
     }
@@ -102,9 +102,9 @@ class SyncVectorClockReceiveEventTest extends AbstractSyncVectorTest
     #[DataProvider('provideSameInstanceData')]
     public function testApplyReceiveEventWithSameInstanceWhileIdleFails(SyncVectorClock $clock): void
     {
-        $this->expectException(CannotReceiveSameClockInstanceException::class);
+        self::expectException(CannotReceiveSameClockInstanceException::class);
 
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->applyReceiveEvent($clock);
     }
@@ -112,11 +112,11 @@ class SyncVectorClockReceiveEventTest extends AbstractSyncVectorTest
     #[DataProvider('provideSameInstanceAndWrongNodeData')]
     public function testApplyReceiveEventWithSameInstanceWhileInCommunicationFails(SyncVectorClock $clock, string $expectedCommunicatingNode): void
     {
-        $this->expectException(CannotReceiveSameClockInstanceException::class);
+        self::expectException(CannotReceiveSameClockInstanceException::class);
 
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
         $clock->applySendEvent($expectedCommunicatingNode);
-        $this->assertIsCommunicating($clock, $expectedCommunicatingNode);
+        self::assertIsCommunicating($clock, $expectedCommunicatingNode);
 
         $clock->applyReceiveEvent($clock);
     }

@@ -98,7 +98,7 @@ class SyncVectorClockNodeAccessorsTest extends AbstractSyncVectorTest
     #[TestWith([true])]
     public function testAddNodeFailsIfNodeIsNotValid(string|int|float|bool $nodeToAdd): void
     {
-        $this->expectException(NumericNodeNameException::class);
+        self::expectException(NumericNodeNameException::class);
         $vectorClock = new SyncVectorClock(self::DEFAULT_NODE);
         $vectorClock->addNode($nodeToAdd);
     }
@@ -107,7 +107,7 @@ class SyncVectorClockNodeAccessorsTest extends AbstractSyncVectorTest
     #[TestWith([false])]
     public function testAddNodeFailsIfNodeNameIsForbiddenValue(string|bool $nodeToAdd): void
     {
-        $this->expectException(InvalidNodeNameException::class);
+        self::expectException(InvalidNodeNameException::class);
         $vectorClock = new SyncVectorClock(self::DEFAULT_NODE);
         $vectorClock->addNode($nodeToAdd);
     }
@@ -242,9 +242,9 @@ class SyncVectorClockNodeAccessorsTest extends AbstractSyncVectorTest
     public function testCannotRemoveNodeIfStateIsNotIdle(): void
     {
         $vectorClock = new SyncVectorClock(self::DEFAULT_NODE, ['NODE-TOTO' => LogicalTimestamp::init()]);
-        $this->assertIsIdle($vectorClock);
+        self::assertIsIdle($vectorClock);
         $vectorClock->applySendEvent(self::DEFAULT_NODE);
-        $this->assertIsCommunicating($vectorClock, self::DEFAULT_NODE);
+        self::assertIsCommunicating($vectorClock, self::DEFAULT_NODE);
 
         self::assertFalse($vectorClock->removeNode('NODE-TOTO'));
         foreach ([self::DEFAULT_NODE, 'NODE-TOTO'] as $expectedNode) {
@@ -255,9 +255,9 @@ class SyncVectorClockNodeAccessorsTest extends AbstractSyncVectorTest
     public function testCannotAddNodeIfStateIsNotIdle(): void
     {
         $vectorClock = new SyncVectorClock(self::DEFAULT_NODE, ['NODE-TOTO' => LogicalTimestamp::init()]);
-        $this->assertIsIdle($vectorClock);
+        self::assertIsIdle($vectorClock);
         $vectorClock->applySendEvent(self::DEFAULT_NODE);
-        $this->assertIsCommunicating($vectorClock, self::DEFAULT_NODE);
+        self::assertIsCommunicating($vectorClock, self::DEFAULT_NODE);
 
         self::assertFalse($vectorClock->addNode('NODE-2'));
         foreach ([self::DEFAULT_NODE, 'NODE-TOTO'] as $expectedNode) {

@@ -47,15 +47,6 @@ abstract class AbstractAsyncVectorTest extends TestCase
         return $expected;
     }
 
-    public static function getInitContextWithNodes(array $nodes): AsyncVectorClock
-    {
-        return array_reduce($nodes, function (array $carry, string $node) {
-            $carry[$node] = LogicalTimestamp::init();
-
-            return $carry;
-        }, []);
-    }
-
     public static function provideNotComparableClocks(): \Generator
     {
         yield 'Not same size' => [

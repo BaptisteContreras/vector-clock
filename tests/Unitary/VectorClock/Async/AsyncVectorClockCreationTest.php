@@ -102,7 +102,7 @@ class AsyncVectorClockCreationTest extends TestCase
     #[TestWith([true])]
     public function testWithoutInitialContextAndWithNumericNodeThrowException(string|int|float|bool $node): void
     {
-        $this->expectException(NumericNodeNameException::class);
+        self::expectException(NumericNodeNameException::class);
         $clock = new AsyncVectorClock($node);
     }
 
@@ -110,28 +110,28 @@ class AsyncVectorClockCreationTest extends TestCase
     #[TestWith([false])]
     public function testWithoutInitialContextAndWithForbiddenNodeNameThrowException(string|bool $node): void
     {
-        $this->expectException(InvalidNodeNameException::class);
+        self::expectException(InvalidNodeNameException::class);
         $clock = new AsyncVectorClock($node);
     }
 
     #[DataProvider('provideInitialContextWithNumericKey')]
     public function testInitialContextContainsNumericNodeThrowException(string $node, array $initialContext): void
     {
-        $this->expectException(NumericNodeNameException::class);
+        self::expectException(NumericNodeNameException::class);
         $clock = new AsyncVectorClock($node, $initialContext);
     }
 
     #[DataProvider('provideInitialContextWithForbiddenKey')]
     public function testInitialContextContainsForbiddenNodeNameThrowException(string $node, array $initialContext): void
     {
-        $this->expectException(InvalidNodeNameException::class);
+        self::expectException(InvalidNodeNameException::class);
         $clock = new AsyncVectorClock($node, $initialContext);
     }
 
     #[DataProvider('provideInitialContextWithBadValue')]
     public function testInitialContextContainsBadValuesThrowException(string $node, array $initialContext): void
     {
-        $this->expectException(InvalidVectorClockStateException::class);
+        self::expectException(InvalidVectorClockStateException::class);
         $clock = new AsyncVectorClock($node, $initialContext);
     }
 

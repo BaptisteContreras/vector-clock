@@ -33,28 +33,28 @@ class SyncVectorClockCausalityTest extends AbstractSyncVectorTest
     #[DataProvider('provideNotComparableClocks')]
     public function testHappenBeforeWithUncomparableClocksThrowException(SyncVectorClock $clock1, SyncVectorClock $clock2): void
     {
-        $this->expectException(UnComparableException::class);
+        self::expectException(UnComparableException::class);
         $clock1->happenBefore($clock2);
     }
 
     #[DataProvider('provideNotComparableClocks')]
     public function testHappenAfterWithUncomparableClocksThrowException(SyncVectorClock $clock1, SyncVectorClock $clock2): void
     {
-        $this->expectException(UnComparableException::class);
+        self::expectException(UnComparableException::class);
         $clock1->happenAfter($clock2);
     }
 
     #[DataProvider('provideNotComparableClocks')]
     public function testHappenBeforeWithUncomparableClocksThrowException2(SyncVectorClock $clock1, SyncVectorClock $clock2): void
     {
-        $this->expectException(UnComparableException::class);
+        self::expectException(UnComparableException::class);
         $clock2->happenBefore($clock1);
     }
 
     #[DataProvider('provideNotComparableClocks')]
     public function testHappenAfterWithUncomparableClocksThrowException2(SyncVectorClock $clock1, SyncVectorClock $clock2): void
     {
-        $this->expectException(UnComparableException::class);
+        self::expectException(UnComparableException::class);
         $clock2->happenAfter($clock1);
     }
 

@@ -13,27 +13,6 @@ abstract class AbstractSyncVectorTest extends TestCase
     protected const DEFAULT_NODE_2 = 'NODE-TEST-2';
     protected const DEFAULT_NODE_3 = 'NODE-TEST-3';
 
-    protected function getTimestampValueForNode(SyncVectorClock $clock, string $node): int
-    {
-        return $clock->getTimestamps()[$node]->getValue();
-    }
-
-    protected function assertIsIdle(SyncVectorClock $clock): void
-    {
-        self::assertEquals(SyncClockState::IDLE, $clock->getCommunicationState());
-        self::assertNull($clock->getCommunicatingNode());
-        self::assertTrue($clock->isIdle());
-        self::assertFalse($clock->isCommunicating());
-    }
-
-    protected function assertIsCommunicating(SyncVectorClock $clock, string $nodeCommunicatingWith): void
-    {
-        self::assertEquals(SyncClockState::COMMUNICATING, $clock->getCommunicationState());
-        self::assertEquals($nodeCommunicatingWith, $clock->getCommunicatingNode());
-        self::assertTrue($clock->isCommunicating());
-        self::assertFalse($clock->isIdle());
-    }
-
     public static function defaultClockWithContext(array $initialContext = []): SyncVectorClock
     {
         return new SyncVectorClock(self::DEFAULT_NODE, $initialContext);
@@ -135,5 +114,26 @@ abstract class AbstractSyncVectorTest extends TestCase
                 self::DEFAULT_NODE_3 => new LogicalTimestamp(3),
             ]),
         ];
+    }
+
+    protected function getTimestampValueForNode(SyncVectorClock $clock, string $node): int
+    {
+        return $clock->getTimestamps()[$node]->getValue();
+    }
+
+    protected static function assertIsIdle(SyncVectorClock $clock): void
+    {
+        self::assertEquals(SyncClockState::IDLE, $clock->getCommunicationState());
+        self::assertNull($clock->getCommunicatingNode());
+        self::assertTrue($clock->isIdle());
+        self::assertFalse($clock->isCommunicating());
+    }
+
+    protected static function assertIsCommunicating(SyncVectorClock $clock, string $nodeCommunicatingWith): void
+    {
+        self::assertEquals(SyncClockState::COMMUNICATING, $clock->getCommunicationState());
+        self::assertEquals($nodeCommunicatingWith, $clock->getCommunicatingNode());
+        self::assertTrue($clock->isCommunicating());
+        self::assertFalse($clock->isIdle());
     }
 }
