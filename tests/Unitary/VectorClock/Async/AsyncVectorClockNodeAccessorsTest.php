@@ -101,7 +101,7 @@ class AsyncVectorClockNodeAccessorsTest extends TestCase
     #[TestWith([true])]
     public function testAddNodeFailsIfNodeIsNotValid(string|int|float|bool $nodeToAdd): void
     {
-        $this->expectException(NumericNodeNameException::class);
+        self::expectException(NumericNodeNameException::class);
         $vectorClock = new AsyncVectorClock(self::DEFAULT_NODE);
         $vectorClock->addNode($nodeToAdd);
     }
@@ -110,7 +110,7 @@ class AsyncVectorClockNodeAccessorsTest extends TestCase
     #[TestWith([false])]
     public function testAddNodeFailsIfNodeNameIsForbiddenValue(string|bool $nodeToAdd): void
     {
-        $this->expectException(InvalidNodeNameException::class);
+        self::expectException(InvalidNodeNameException::class);
         $vectorClock = new AsyncVectorClock(self::DEFAULT_NODE);
         $vectorClock->addNode($nodeToAdd);
     }

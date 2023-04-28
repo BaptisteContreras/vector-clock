@@ -14,56 +14,56 @@ class SyncVectorClockSendEventTest extends AbstractSyncVectorTest
     {
         $clock = self::defaultClockWithContext();
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->applySendEvent(self::DEFAULT_NODE);
         self::assertEquals(1, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
-        $this->assertIsCommunicating($clock, self::DEFAULT_NODE);
+        self::assertIsCommunicating($clock, self::DEFAULT_NODE);
 
         $clock->applyReceiveEvent(self::defaultClockWithContext($clock->getTimestamps()));
         self::assertEquals(1, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->applySendEvent(self::DEFAULT_NODE);
         self::assertEquals(2, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
-        $this->assertIsCommunicating($clock, self::DEFAULT_NODE);
+        self::assertIsCommunicating($clock, self::DEFAULT_NODE);
 
         $clock->applyReceiveEvent(self::defaultClockWithContext($clock->getTimestamps()));
         self::assertEquals(2, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->addNode(self::DEFAULT_NODE_2);
         self::assertEquals(2, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->applySendEvent(self::DEFAULT_NODE);
         self::assertEquals(3, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
-        $this->assertIsCommunicating($clock, self::DEFAULT_NODE);
+        self::assertIsCommunicating($clock, self::DEFAULT_NODE);
 
         $clock->applyReceiveEvent(self::defaultClockWithContext($clock->getTimestamps()));
         self::assertEquals(3, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->applySendEvent(self::DEFAULT_NODE_2);
         self::assertEquals(4, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
-        $this->assertIsCommunicating($clock, self::DEFAULT_NODE_2);
+        self::assertIsCommunicating($clock, self::DEFAULT_NODE_2);
 
         $clock->applyReceiveEvent(self::defaultClock2WithContext($clock->getTimestamps()));
         self::assertEquals(4, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->removeNode(self::DEFAULT_NODE_2);
         self::assertEquals(4, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->applySendEvent(self::DEFAULT_NODE);
         self::assertEquals(5, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
-        $this->assertIsCommunicating($clock, self::DEFAULT_NODE);
+        self::assertIsCommunicating($clock, self::DEFAULT_NODE);
     }
 
     public function testApplySendEventWithInitialContext(): void
@@ -71,72 +71,72 @@ class SyncVectorClockSendEventTest extends AbstractSyncVectorTest
         $clock = self::defaultClockWithContext([self::DEFAULT_NODE_2 => LogicalTimestamp::init()]);
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->applySendEvent(self::DEFAULT_NODE);
         self::assertEquals(1, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
-        $this->assertIsCommunicating($clock, self::DEFAULT_NODE);
+        self::assertIsCommunicating($clock, self::DEFAULT_NODE);
 
         $clock->applyReceiveEvent(self::defaultClockWithContext($clock->getTimestamps()));
         self::assertEquals(1, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->applySendEvent(self::DEFAULT_NODE_2);
         self::assertEquals(2, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
-        $this->assertIsCommunicating($clock, self::DEFAULT_NODE_2);
+        self::assertIsCommunicating($clock, self::DEFAULT_NODE_2);
 
         $clock->applyReceiveEvent(self::defaultClock2WithContext($clock->getTimestamps()));
         self::assertEquals(2, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->addNode(self::DEFAULT_NODE_3);
         self::assertEquals(2, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_3));
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->applySendEvent(self::DEFAULT_NODE);
         self::assertEquals(3, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_3));
-        $this->assertIsCommunicating($clock, self::DEFAULT_NODE);
+        self::assertIsCommunicating($clock, self::DEFAULT_NODE);
 
         $clock->applyReceiveEvent(self::defaultClockWithContext($clock->getTimestamps()));
         self::assertEquals(3, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->applySendEvent(self::DEFAULT_NODE_3);
         self::assertEquals(4, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_3));
-        $this->assertIsCommunicating($clock, self::DEFAULT_NODE_3);
+        self::assertIsCommunicating($clock, self::DEFAULT_NODE_3);
 
         $clock->applyReceiveEvent(self::defaultClock3WithContext($clock->getTimestamps()));
         self::assertEquals(4, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_3));
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->removeNode(self::DEFAULT_NODE_3);
         self::assertEquals(4, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
-        $this->assertIsIdle($clock);
+        self::assertIsIdle($clock);
 
         $clock->applySendEvent(self::DEFAULT_NODE_2);
         self::assertEquals(5, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE));
         self::assertEquals(0, $this->getTimestampValueForNode($clock, self::DEFAULT_NODE_2));
-        $this->assertIsCommunicating($clock, self::DEFAULT_NODE_2);
+        self::assertIsCommunicating($clock, self::DEFAULT_NODE_2);
     }
 
     #[DataProvider('provideUnknownNode')]
     public function testApplySendEventOnUnknownNodeFails(SyncVectorClock $clock, string $unknownNode): void
     {
-        $this->expectException(UnknownNodeException::class);
+        self::expectException(UnknownNodeException::class);
 
         $clock->applySendEvent($unknownNode);
     }
@@ -144,10 +144,10 @@ class SyncVectorClockSendEventTest extends AbstractSyncVectorTest
     #[DataProvider('provideNotIdleCases')]
     public function testCannotApplySendEventIfStateIsNotIdle(SyncVectorClock $clock, string $node): void
     {
-        $this->expectException(ClockIsNotIdleException::class);
+        self::expectException(ClockIsNotIdleException::class);
 
         $clock->applySendEvent($clock->getNode()); // Start a communication with itself
-        $this->assertIsCommunicating($clock, $clock->getNode());
+        self::assertIsCommunicating($clock, $clock->getNode());
 
         $clock->applySendEvent($node); // Start a new communication while not being idle...
     }

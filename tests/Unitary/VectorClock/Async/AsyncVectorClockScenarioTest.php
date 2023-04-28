@@ -73,173 +73,173 @@ class AsyncVectorClockScenarioTest extends TestCase
         self::assertEquals(1, $l->getTimestamps()[self::PROCESS_2]->getValue());
         self::assertEquals(1, $v->getTimestamps()[self::PROCESS_3]->getValue());
 
-        $this->assertClock($a, 1, 0, 0);
-        $this->assertClock($l, 0, 1, 0);
-        $this->assertClock($v, 0, 0, 1);
+        self::assertClock($a, 1, 0, 0);
+        self::assertClock($l, 0, 1, 0);
+        self::assertClock($v, 0, 0, 1);
 
         $b = (clone $a)->applyLocalEvent();
         $m = (clone $l)->applyReceiveEvent($a);
         $w = (clone $v)->applyLocalEvent();
 
-        $this->assertClock($b, 2, 0, 0);
-        $this->assertClock($m, 2, 2, 0);
-        $this->assertClock($w, 0, 0, 2);
+        self::assertClock($b, 2, 0, 0);
+        self::assertClock($m, 2, 2, 0);
+        self::assertClock($w, 0, 0, 2);
 
         $c = (clone $b)->applySendEvent();
         $n = (clone $m)->applyReceiveEvent($w);
         $x = (clone $w)->applySendEvent();
 
-        $this->assertClock($c, 3, 0, 0);
-        $this->assertClock($n, 2, 3, 3);
-        $this->assertClock($x, 0, 0, 3);
+        self::assertClock($c, 3, 0, 0);
+        self::assertClock($n, 2, 3, 3);
+        self::assertClock($x, 0, 0, 3);
 
         $d = (clone $c)->applyReceiveEvent($x);
         $o = (clone $n)->applySendEvent();
         $y = (clone $x)->applyLocalEvent();
 
-        $this->assertClock($d, 4, 0, 4);
-        $this->assertClock($o, 2, 4, 3);
-        $this->assertClock($y, 0, 0, 4);
+        self::assertClock($d, 4, 0, 4);
+        self::assertClock($o, 2, 4, 3);
+        self::assertClock($y, 0, 0, 4);
 
         $p = (clone $o)->applyReceiveEvent($c);
         $z = (clone $y)->applyReceiveEvent($o);
 
-        $this->assertClock($p, 4, 5, 3);
-        $this->assertClock($z, 2, 5, 5);
+        self::assertClock($p, 4, 5, 3);
+        self::assertClock($z, 2, 5, 5);
 
         $q = (clone $p)->applyLocalEvent();
 
-        $this->assertClock($q, 4, 6, 3);
+        self::assertClock($q, 4, 6, 3);
 
         // ASSERT HAPPEN BEFORE ON SAME PROCESS
-        $this->assertHappenBefore($w, $y); // w -> y
-        $this->assertHappenBefore($v, $w); // v -> w
-        $this->assertHappenBefore($v, $y); // v -> y
+        self::assertHappenBefore($w, $y); // w -> y
+        self::assertHappenBefore($v, $w); // v -> w
+        self::assertHappenBefore($v, $y); // v -> y
 
-        $this->assertHappenBefore($l, $p); // l -> p
-        $this->assertHappenBefore($p, $q); // p -> q
-        $this->assertHappenBefore($n, $o); // n -> o
-        $this->assertHappenBefore($o, $p); // o -> p
+        self::assertHappenBefore($l, $p); // l -> p
+        self::assertHappenBefore($p, $q); // p -> q
+        self::assertHappenBefore($n, $o); // n -> o
+        self::assertHappenBefore($o, $p); // o -> p
 
-        $this->assertHappenBefore($a, $d); // a -> d
-        $this->assertHappenBefore($b, $c); // b -> c
-        $this->assertHappenBefore($c, $d); // c -> d
+        self::assertHappenBefore($a, $d); // a -> d
+        self::assertHappenBefore($b, $c); // b -> c
+        self::assertHappenBefore($c, $d); // c -> d
 
         // ASSERT IDENTICAL
-        $this->assertIdentical($a, $a); // a == a
-        $this->assertIdentical($n, $n); // n == n
-        $this->assertIdentical($z, $z); // z == z
-        $this->assertIdentical($q, $q); // q == q
-        $this->assertIdentical($l, $l); // l == l
+        self::assertIdentical($a, $a); // a == a
+        self::assertIdentical($n, $n); // n == n
+        self::assertIdentical($z, $z); // z == z
+        self::assertIdentical($q, $q); // q == q
+        self::assertIdentical($l, $l); // l == l
 
         // ASSERT HAPPEN BEFORE ON DIFFERENT PROCESS
-        $this->assertHappenBefore($b, $q); // b -> q
-        $this->assertHappenBefore($w, $n); // w -> n
+        self::assertHappenBefore($b, $q); // b -> q
+        self::assertHappenBefore($w, $n); // w -> n
 
-        $this->assertHappenBefore($a, $z); // a -> z
-        $this->assertHappenBefore($a, $m); // a -> m
-        $this->assertHappenBefore($a, $n); // a -> n
-        $this->assertHappenBefore($a, $o); // a -> o
-        $this->assertHappenBefore($a, $p); // a -> p
-        $this->assertHappenBefore($a, $q); // a -> q
+        self::assertHappenBefore($a, $z); // a -> z
+        self::assertHappenBefore($a, $m); // a -> m
+        self::assertHappenBefore($a, $n); // a -> n
+        self::assertHappenBefore($a, $o); // a -> o
+        self::assertHappenBefore($a, $p); // a -> p
+        self::assertHappenBefore($a, $q); // a -> q
 
-        $this->assertHappenBefore($b, $p); // b -> p
-        $this->assertHappenBefore($b, $q); // b -> q
+        self::assertHappenBefore($b, $p); // b -> p
+        self::assertHappenBefore($b, $q); // b -> q
 
-        $this->assertHappenBefore($c, $p); // c -> p
-        $this->assertHappenBefore($c, $q); // c -> q
+        self::assertHappenBefore($c, $p); // c -> p
+        self::assertHappenBefore($c, $q); // c -> q
 
-        $this->assertHappenBefore($l, $z); // l -> z
+        self::assertHappenBefore($l, $z); // l -> z
 
-        $this->assertHappenBefore($m, $z); // m -> z
+        self::assertHappenBefore($m, $z); // m -> z
 
-        $this->assertHappenBefore($n, $z); // n -> z
+        self::assertHappenBefore($n, $z); // n -> z
 
-        $this->assertHappenBefore($o, $z); // n -> z
+        self::assertHappenBefore($o, $z); // n -> z
 
-        $this->assertHappenBefore($v, $d); // v -> d
-        $this->assertHappenBefore($v, $n); // v -> n
-        $this->assertHappenBefore($v, $o); // v -> o
-        $this->assertHappenBefore($v, $p); // v -> p
-        $this->assertHappenBefore($v, $q); // v -> q
+        self::assertHappenBefore($v, $d); // v -> d
+        self::assertHappenBefore($v, $n); // v -> n
+        self::assertHappenBefore($v, $o); // v -> o
+        self::assertHappenBefore($v, $p); // v -> p
+        self::assertHappenBefore($v, $q); // v -> q
 
-        $this->assertHappenBefore($w, $d); // w -> d
-        $this->assertHappenBefore($w, $n); // w -> n
-        $this->assertHappenBefore($w, $o); // w -> o
-        $this->assertHappenBefore($w, $p); // w -> p
-        $this->assertHappenBefore($w, $q); // w -> q
+        self::assertHappenBefore($w, $d); // w -> d
+        self::assertHappenBefore($w, $n); // w -> n
+        self::assertHappenBefore($w, $o); // w -> o
+        self::assertHappenBefore($w, $p); // w -> p
+        self::assertHappenBefore($w, $q); // w -> q
 
-        $this->assertHappenBefore($x, $d); // x -> d
+        self::assertHappenBefore($x, $d); // x -> d
 
         // ASSERT CONCURRENT
-        $this->assertAreConcurrent($a, $l); // a <-> l
-        $this->assertAreConcurrent($a, $v); // a <-> v
-        $this->assertAreConcurrent($a, $w); // a <-> w
-        $this->assertAreConcurrent($a, $x); // a <-> x
-        $this->assertAreConcurrent($a, $y); // a <-> y
+        self::assertAreConcurrent($a, $l); // a <-> l
+        self::assertAreConcurrent($a, $v); // a <-> v
+        self::assertAreConcurrent($a, $w); // a <-> w
+        self::assertAreConcurrent($a, $x); // a <-> x
+        self::assertAreConcurrent($a, $y); // a <-> y
 
-        $this->assertAreConcurrent($b, $l); // b <-> l
-        $this->assertAreConcurrent($b, $o); // b <-> o
-        $this->assertAreConcurrent($b, $n); // b <-> n
-        $this->assertAreConcurrent($b, $m); // b <-> m
-        $this->assertAreConcurrent($b, $v); // b <-> v
-        $this->assertAreConcurrent($b, $w); // b <-> w
-        $this->assertAreConcurrent($b, $x); // b <-> x
-        $this->assertAreConcurrent($b, $y); // b <-> y
-        $this->assertAreConcurrent($b, $z); // b <-> z
+        self::assertAreConcurrent($b, $l); // b <-> l
+        self::assertAreConcurrent($b, $o); // b <-> o
+        self::assertAreConcurrent($b, $n); // b <-> n
+        self::assertAreConcurrent($b, $m); // b <-> m
+        self::assertAreConcurrent($b, $v); // b <-> v
+        self::assertAreConcurrent($b, $w); // b <-> w
+        self::assertAreConcurrent($b, $x); // b <-> x
+        self::assertAreConcurrent($b, $y); // b <-> y
+        self::assertAreConcurrent($b, $z); // b <-> z
 
-        $this->assertAreConcurrent($c, $l); // c <-> l
-        $this->assertAreConcurrent($c, $o); // c <-> o
-        $this->assertAreConcurrent($c, $n); // c <-> n
-        $this->assertAreConcurrent($c, $m); // c <-> m
-        $this->assertAreConcurrent($c, $v); // c <-> v
-        $this->assertAreConcurrent($c, $w); // c <-> w
-        $this->assertAreConcurrent($c, $x); // c <-> x
-        $this->assertAreConcurrent($c, $y); // c <-> y
-        $this->assertAreConcurrent($c, $z); // c <-> z
+        self::assertAreConcurrent($c, $l); // c <-> l
+        self::assertAreConcurrent($c, $o); // c <-> o
+        self::assertAreConcurrent($c, $n); // c <-> n
+        self::assertAreConcurrent($c, $m); // c <-> m
+        self::assertAreConcurrent($c, $v); // c <-> v
+        self::assertAreConcurrent($c, $w); // c <-> w
+        self::assertAreConcurrent($c, $x); // c <-> x
+        self::assertAreConcurrent($c, $y); // c <-> y
+        self::assertAreConcurrent($c, $z); // c <-> z
 
-        $this->assertAreConcurrent($d, $y); // d <-> y
-        $this->assertAreConcurrent($d, $z); // d <-> z
-        $this->assertAreConcurrent($d, $l); // d <-> l
-        $this->assertAreConcurrent($d, $m); // d <-> m
-        $this->assertAreConcurrent($d, $n); // d <-> n
-        $this->assertAreConcurrent($d, $o); // d <-> o
-        $this->assertAreConcurrent($d, $p); // d <-> p
-        $this->assertAreConcurrent($d, $q); // d <-> q
+        self::assertAreConcurrent($d, $y); // d <-> y
+        self::assertAreConcurrent($d, $z); // d <-> z
+        self::assertAreConcurrent($d, $l); // d <-> l
+        self::assertAreConcurrent($d, $m); // d <-> m
+        self::assertAreConcurrent($d, $n); // d <-> n
+        self::assertAreConcurrent($d, $o); // d <-> o
+        self::assertAreConcurrent($d, $p); // d <-> p
+        self::assertAreConcurrent($d, $q); // d <-> q
 
-        $this->assertAreConcurrent($l, $v); // l <-> v
-        $this->assertAreConcurrent($l, $w); // l <-> w
-        $this->assertAreConcurrent($l, $x); // l <-> x
-        $this->assertAreConcurrent($l, $y); // l <-> y
+        self::assertAreConcurrent($l, $v); // l <-> v
+        self::assertAreConcurrent($l, $w); // l <-> w
+        self::assertAreConcurrent($l, $x); // l <-> x
+        self::assertAreConcurrent($l, $y); // l <-> y
 
-        $this->assertAreConcurrent($m, $v); // m <-> v
-        $this->assertAreConcurrent($m, $w); // m <-> w
-        $this->assertAreConcurrent($m, $x); // m <-> x
-        $this->assertAreConcurrent($m, $y); // m <-> y
+        self::assertAreConcurrent($m, $v); // m <-> v
+        self::assertAreConcurrent($m, $w); // m <-> w
+        self::assertAreConcurrent($m, $x); // m <-> x
+        self::assertAreConcurrent($m, $y); // m <-> y
 
-        $this->assertAreConcurrent($n, $x); // n <-> x
-        $this->assertAreConcurrent($n, $y); // n <-> y
+        self::assertAreConcurrent($n, $x); // n <-> x
+        self::assertAreConcurrent($n, $y); // n <-> y
 
-        $this->assertAreConcurrent($o, $x); // o <-> x
-        $this->assertAreConcurrent($o, $y); // o <-> y
+        self::assertAreConcurrent($o, $x); // o <-> x
+        self::assertAreConcurrent($o, $y); // o <-> y
 
-        $this->assertAreConcurrent($p, $x); // p <-> x
-        $this->assertAreConcurrent($p, $y); // p <-> y
-        $this->assertAreConcurrent($p, $z); // p <-> z
+        self::assertAreConcurrent($p, $x); // p <-> x
+        self::assertAreConcurrent($p, $y); // p <-> y
+        self::assertAreConcurrent($p, $z); // p <-> z
 
-        $this->assertAreConcurrent($q, $x); // q <-> x
-        $this->assertAreConcurrent($q, $y); // q <-> y
-        $this->assertAreConcurrent($q, $z); // q <-> z
+        self::assertAreConcurrent($q, $x); // q <-> x
+        self::assertAreConcurrent($q, $y); // q <-> y
+        self::assertAreConcurrent($q, $z); // q <-> z
     }
 
-    private function assertClock(AsyncVectorClock $clock, int $process1, int $process2, int $process3): void
+    private static function assertClock(AsyncVectorClock $clock, int $process1, int $process2, int $process3): void
     {
         assertEquals($process1, $clock->getTimestamps()[self::PROCESS_1]->getValue());
         assertEquals($process2, $clock->getTimestamps()[self::PROCESS_2]->getValue());
         assertEquals($process3, $clock->getTimestamps()[self::PROCESS_3]->getValue());
     }
 
-    private function assertHappenBefore(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
+    private static function assertHappenBefore(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
         // clock1 -> clock2
 
@@ -252,7 +252,7 @@ class AsyncVectorClockScenarioTest extends TestCase
         assertEquals(ClockOrder::HAPPEN_AFTER, $clock2->compare($clock1));
     }
 
-    private function assertIdentical(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
+    private static function assertIdentical(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
         // clock1 == clock2
 
@@ -262,7 +262,7 @@ class AsyncVectorClockScenarioTest extends TestCase
         assertEquals(ClockOrder::IDENTICAL, $clock2->compare($clock1));
     }
 
-    private function assertAreConcurrent(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
+    private static function assertAreConcurrent(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
         // clock1 <-> clock2
 

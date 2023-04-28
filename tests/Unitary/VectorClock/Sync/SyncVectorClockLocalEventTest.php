@@ -94,7 +94,7 @@ class SyncVectorClockLocalEventTest extends AbstractSyncVectorTest
         $clock->applySendEvent(self::DEFAULT_NODE_2);
         self::assertEquals(SyncClockState::COMMUNICATING, $clock->getCommunicationState());
 
-        $this->expectException(ClockIsNotIdleException::class);
+        self::expectException(ClockIsNotIdleException::class);
         $clock->applyLocalEvent();
     }
 }

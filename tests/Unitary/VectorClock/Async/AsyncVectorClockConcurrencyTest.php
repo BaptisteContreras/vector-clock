@@ -31,14 +31,14 @@ class AsyncVectorClockConcurrencyTest extends AbstractAsyncVectorTest
     #[DataProvider('provideNotComparableClocks')]
     public function testIsConcurrentWithUncomparableClocksThrowException(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
-        $this->expectException(UnComparableException::class);
+        self::expectException(UnComparableException::class);
         $clock1->isConcurrentWith($clock2);
     }
 
     #[DataProvider('provideNotComparableClocks')]
     public function testIsConcurrentWithUncomparableClocksThrowException2(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
-        $this->expectException(UnComparableException::class);
+        self::expectException(UnComparableException::class);
         $clock2->isConcurrentWith($clock1);
     }
 

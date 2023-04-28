@@ -35,7 +35,7 @@ class AsyncVectorClockReceiveEventTest extends AbstractAsyncVectorTest
     #[DataProvider('provideUnknownData')]
     public function testApplyReceiveEventFailIfNodeIsUnknown(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
-        $this->expectException(UnknownNodeException::class);
+        self::expectException(UnknownNodeException::class);
 
         $clock1->applyReceiveEvent($clock2);
     }
@@ -43,7 +43,7 @@ class AsyncVectorClockReceiveEventTest extends AbstractAsyncVectorTest
     #[DataProvider('provideSameInstanceData')]
     public function testApplyReceiveEventWithSameInstanceWhileIdleFails(AsyncVectorClock $clock): void
     {
-        $this->expectException(CannotReceiveSameClockInstanceException::class);
+        self::expectException(CannotReceiveSameClockInstanceException::class);
 
         $clock->applyReceiveEvent($clock);
     }

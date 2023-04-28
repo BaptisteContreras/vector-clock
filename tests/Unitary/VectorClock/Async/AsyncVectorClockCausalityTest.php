@@ -32,28 +32,28 @@ class AsyncVectorClockCausalityTest extends AbstractAsyncVectorTest
     #[DataProvider('provideNotComparableClocks')]
     public function testHappenBeforeWithUncomparableClocksThrowException(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
-        $this->expectException(UnComparableException::class);
+        self::expectException(UnComparableException::class);
         $clock1->happenBefore($clock2);
     }
 
     #[DataProvider('provideNotComparableClocks')]
     public function testHappenAfterWithUncomparableClocksThrowException(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
-        $this->expectException(UnComparableException::class);
+        self::expectException(UnComparableException::class);
         $clock1->happenAfter($clock2);
     }
 
     #[DataProvider('provideNotComparableClocks')]
     public function testHappenBeforeWithUncomparableClocksThrowException2(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
-        $this->expectException(UnComparableException::class);
+        self::expectException(UnComparableException::class);
         $clock2->happenBefore($clock1);
     }
 
     #[DataProvider('provideNotComparableClocks')]
     public function testHappenAfterWithUncomparableClocksThrowException2(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
-        $this->expectException(UnComparableException::class);
+        self::expectException(UnComparableException::class);
         $clock2->happenAfter($clock1);
     }
 
