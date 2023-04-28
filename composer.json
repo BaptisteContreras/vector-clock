@@ -2,6 +2,11 @@
   "name": "dynamophp/vector-clock",
   "type": "library",
   "license": "MIT",
+  "authors": [
+    {
+      "name": "Baptiste CONTRERAS"
+    }
+  ],
   "autoload": {
     "psr-4": {
       "Dynamophp\\VectorClock\\": "src/"
@@ -13,11 +18,6 @@
       "Dynamophp\\VectorClock\\Test\\": "tests/"
     }
   },
-  "authors": [
-    {
-      "name": "Baptiste CONTRERAS"
-    }
-  ],
   "minimum-stability": "stable",
   "require-dev": {
     "phpunit/phpunit": "^10",

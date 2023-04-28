@@ -10,7 +10,7 @@ use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
-class AsyncVectorScenarioTest extends TestCase
+class AsyncVectorClockScenarioTest extends TestCase
 {
     private const PROCESS_1 = 'process 1';
     private const PROCESS_2 = 'process 2';

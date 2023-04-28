@@ -8,8 +8,6 @@ use Dynamophp\VectorClock\LogicalTimestamp;
 use Dynamophp\VectorClock\SyncVectorClock;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-use function PHPUnit\Framework\assertTrue;
-
 class SyncVectorClockIdenticalTest extends AbstractSyncVectorTest
 {
     #[DataProvider('provideIdenticalCases')]
@@ -24,8 +22,8 @@ class SyncVectorClockIdenticalTest extends AbstractSyncVectorTest
     public function testIsIdentical(SyncVectorClock $clock1, SyncVectorClock $clock2): void
     {
         // $clock1 == $clock2 in all our cases
-        assertTrue($clock1->isIdenticalTo($clock2));
-        assertTrue($clock2->isIdenticalTo($clock1));
+        self::assertTrue($clock1->isIdenticalTo($clock2));
+        self::assertTrue($clock2->isIdenticalTo($clock1));
     }
 
     #[DataProvider('provideNotComparableClocks')]

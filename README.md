@@ -1,13 +1,59 @@
 # vector-clock
 
 
-A PHP implementation of the concept of **Vector Clock** as defined in the paper : **Timestamps in Message-Passing Systems That Preserve the Partial Ordering** (paper/vector-clock-paper.pdf).
+A PHP implementation of the concept of **Vector Clock** and **Lamport timestamp** as defined in the paper : **Timestamps in Message-Passing Systems That Preserve the Partial Ordering** (paper/vector-clock-paper.pdf).
 
 This library provides :
+- Lamport timestamp
 - Asynchrone vector clock
 - Synchrone vector clock
-- Lamport timestamp (wip)
 
+## Lamport timestamp
+
+### Usage
+
+```php
+<?php
+
+$lt1 = new LamportTimestamp(76);
+$lt2 = new LamportTimestamp(59);
+
+assertEquals(76, lt1->getValue());
+assertEquals(59, lt2->getValue());
+assertTrue($lt1->happenAfter($lt2)); // lt2 -> lt1
+assertTrue($lt2->happenBefore($lt1));
+
+
+$lt1->applyLocalEvent();
+$lt2->applyLocalEvent();
+
+assertEquals(77, lt1->getValue());
+assertEquals(60, lt2->getValue());
+assertTrue($lt1->happenAfter($lt2)); // lt2 -> lt1
+assertTrue($lt2->happenBefore($lt1));
+
+
+$lt1ToSend = clone $lt1->applySendEvent();
+$lt2->applyLocalEvent();
+
+assertEquals(78, lt1->getValue());
+assertEquals(78, $lt1ToSend->getValue());
+assertEquals(61, lt2->getValue());
+assertTrue($lt1->isIdenticalTo($lt1ToSend)); // lt1 == lt1ToSend
+assertFalse($lt2->isIdenticalTo($lt1ToSend)); // lt2 != lt1ToSend
+
+$lt2->applyReceiveEvent($lt1ToSend);
+
+assertEquals(78, lt1->getValue());
+assertEquals(79, lt2->getValue());
+assertTrue($lt1->happenBefore($lt2)); // lt1 -> lt2
+assertTrue($lt2->happenAfter($lt1));
+
+```
+
+In the test case : **LamportTimestampScenarioTest::testPaperFigure1A** and **LamportTimestampScenarioTest::testPaperFigure1B** you can see the full scenario of the paper :
+
+![fig1.png](paper/fig1.png)
 
 ## Asynchrone vector clock
 
@@ -61,7 +107,7 @@ assertTrue($l->happenBefore($m)); // l -> m
 In the test case : **AsyncVectorScenarioTest::testPaperFigure3** you can see the full scenario of the paper : 
 
 
-![img.png](paper/fig3.png)
+![fig3.png](paper/fig3.png)
 
 
 ## Synchrone vector clock
@@ -134,4 +180,4 @@ assertTrue($a->happenBefore($l)); // a -> l
 In the test case : **SyncVectorScenarioTest::testPaperFigure7** you can see the full scenario of the paper :
 
 
-![img.png](paper/fig7.png)
+![fig7.png](paper/fig7.png)

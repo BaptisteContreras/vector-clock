@@ -9,7 +9,7 @@ use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
-class SyncVectorScenarioTest extends AbstractSyncVectorTest
+class SyncVectorClockScenarioTest extends AbstractSyncVectorTest
 {
     private const PROCESS_1 = 'process 1';
     private const PROCESS_2 = 'process 2';
