@@ -2,17 +2,17 @@
 
 namespace Dynamophp\VectorClock;
 
-use Dynamophp\VectorClock\Exception\InvalidLogicalTimestampValueException;
+use Dynamophp\VectorClock\Exception\InvalidInitValueException;
 
 class LogicalTimestamp
 {
     /**
-     * @throws InvalidLogicalTimestampValueException
+     * @throws InvalidInitValueException
      */
     public function __construct(private readonly int $counter)
     {
-        if ($this->counter < 0) {
-            throw new InvalidLogicalTimestampValueException();
+        if (0 > $this->counter) {
+            throw new InvalidInitValueException(self::class);
         }
     }
 
