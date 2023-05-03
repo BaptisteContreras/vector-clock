@@ -4,7 +4,7 @@ namespace Dynamophp\VectorClock\Test\Unitary\VectorClock\Async;
 
 use Dynamophp\VectorClock\AsyncVectorClock;
 use Dynamophp\VectorClock\ClockOrder;
-use Dynamophp\VectorClock\Exception\UnComparableException;
+use Dynamophp\VectorClock\Exception\IncomparableException;
 use Dynamophp\VectorClock\LogicalTimestamp;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -32,28 +32,28 @@ class AsyncVectorClockCausalityTest extends AbstractAsyncVectorTest
     #[DataProvider('provideNotComparableClocks')]
     public function testHappenBeforeWithUncomparableClocksThrowException(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
-        self::expectException(UnComparableException::class);
+        self::expectException(IncomparableException::class);
         $clock1->happenBefore($clock2);
     }
 
     #[DataProvider('provideNotComparableClocks')]
     public function testHappenAfterWithUncomparableClocksThrowException(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
-        self::expectException(UnComparableException::class);
+        self::expectException(IncomparableException::class);
         $clock1->happenAfter($clock2);
     }
 
     #[DataProvider('provideNotComparableClocks')]
     public function testHappenBeforeWithUncomparableClocksThrowException2(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
-        self::expectException(UnComparableException::class);
+        self::expectException(IncomparableException::class);
         $clock2->happenBefore($clock1);
     }
 
     #[DataProvider('provideNotComparableClocks')]
     public function testHappenAfterWithUncomparableClocksThrowException2(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
-        self::expectException(UnComparableException::class);
+        self::expectException(IncomparableException::class);
         $clock2->happenAfter($clock1);
     }
 
