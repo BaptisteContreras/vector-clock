@@ -8,6 +8,9 @@ This library provides :
 - Asynchrone vector clock
 - Synchrone vector clock
 
+
+These classes are fully tested (100% coverage)
+
 ## Lamport timestamp
 
 ### Usage
