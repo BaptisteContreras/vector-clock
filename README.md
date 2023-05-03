@@ -1,15 +1,16 @@
-# vector-clock
+# Vector Clock and Lamport timestamp PHP library
 
 
-A PHP implementation of the concept of **Vector Clock** and **Lamport timestamp** as defined in the paper : **Timestamps in Message-Passing Systems That Preserve the Partial Ordering** (paper/vector-clock-paper.pdf).
+This project is a PHP implementation of the concept of **Vector Clock** and **Lamport timestamp** as defined in the paper : **Timestamps in Message-Passing Systems That Preserve the Partial Ordering** (paper/vector-clock-paper.pdf).
 
 This library provides :
 - Lamport timestamp
 - Asynchrone vector clock
 - Synchrone vector clock
 
+These implementations carefully follow the research paper and all classes are fully tested (100% coverage).
 
-These classes are fully tested (100% coverage)
+Every example present in the paper is transcribed as a Phpunit test.
 
 ## Lamport timestamp
 
@@ -184,3 +185,62 @@ In the test case : **SyncVectorScenarioTest::testPaperFigure7** you can see the 
 
 
 ![fig7.png](paper/fig7.png)
+
+## How to contribue
+
+#### Dev environment
+You can launch the project locally, either using an old fashion PHP installation or Docker. 
+
+If you use Docker, there is a docker-compose file for you in the `docker` directory.
+
+```bash
+cd docker && docker-compose up -d
+```
+
+#### Installing dependencies
+
+Using composer in you dev env :
+
+```bash
+composer install
+```
+
+#### Code quality
+
+Your code must be passed through [**PhpCsFixer**](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer) : 
+
+Fix `src/`
+
+```bash
+php vendor/bin/php-cs-fixer fix src --rules=@Symfony
+```
+
+Fix `tests/`
+
+```bash
+php vendor/bin/php-cs-fixer fix tests --rules=@Symfony
+```
+
+
+And be analyzed by [**Phpstan**](https://phpstan.org/)
+
+```bash
+php vendor/bin/phpstan analyse src -c /app/phpstan.neon
+```
+
+#### Tests
+
+The project use [**PhpUnit**](https://phpunit.de/index.html)
+
+Here is the command to launch the test suite
+
+```bash
+php vendor/phpunit/phpunit/phpunit --configuration phpunit.xml.dist tests
+```
+
+*Note: You need Xdebug for the coverage. If you're using the Docker env provided in this project, it's already installed and configured.*
+
+
+#### Commit convention
+
+Your commits message musts follow [**this convention**](https://www.conventionalcommits.org/en/v1.0.0/)
