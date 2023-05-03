@@ -4,7 +4,7 @@ namespace Dynamophp\VectorClock\Test\Unitary\VectorClock\Async;
 
 use Dynamophp\VectorClock\AsyncVectorClock;
 use Dynamophp\VectorClock\ClockOrder;
-use Dynamophp\VectorClock\Exception\UnComparableException;
+use Dynamophp\VectorClock\Exception\IncomparableException;
 use Dynamophp\VectorClock\LogicalTimestamp;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -31,14 +31,14 @@ class AsyncVectorClockIdenticalTest extends AbstractAsyncVectorTest
     #[DataProvider('provideNotComparableClocks')]
     public function testIsIdenticalWithUncomparableClocksThrowException(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
-        self::expectException(UnComparableException::class);
+        self::expectException(IncomparableException::class);
         $clock1->isIdenticalTo($clock2);
     }
 
     #[DataProvider('provideNotComparableClocks')]
     public function testIsIdenticalWithUncomparableClocksThrowException2(AsyncVectorClock $clock1, AsyncVectorClock $clock2): void
     {
-        self::expectException(UnComparableException::class);
+        self::expectException(IncomparableException::class);
         $clock2->isIdenticalTo($clock1);
     }
 

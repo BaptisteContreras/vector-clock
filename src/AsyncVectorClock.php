@@ -3,7 +3,7 @@
 namespace Dynamophp\VectorClock;
 
 use Dynamophp\VectorClock\Exception\CannotReceiveSameClockInstanceException;
-use Dynamophp\VectorClock\Exception\UnComparableException;
+use Dynamophp\VectorClock\Exception\IncomparableException;
 use Dynamophp\VectorClock\Exception\UnknownNodeException;
 
 class AsyncVectorClock extends AbstractVectorClock
@@ -14,76 +14,79 @@ class AsyncVectorClock extends AbstractVectorClock
             return ClockOrder::NOT_COMPARABLE;
         }
 
-        $otherTimestamps = $clock->getTimestamps();
+        $otherClockTimestamps = $clock->getTimestamps();
 
-        if ($this->timestampMap[$this->node]->getValue() < $otherTimestamps[$this->node]->getValue()) {
+        if ($this->timestamps[$this->node]->getValue() < $otherClockTimestamps[$this->node]->getValue()) {
             return ClockOrder::HAPPEN_BEFORE;
         }
 
-        if ($otherTimestamps[$clock->getNode()]->getValue() < $this->timestampMap[$clock->getNode()]->getValue()) {
+        if ($otherClockTimestamps[$clock->getNode()]->getValue() < $this->timestamps[$clock->getNode()]->getValue()) {
             return ClockOrder::HAPPEN_AFTER;
         }
 
-        $hasDifferentTimestamps = false;
+        $hasDifferentTimestamp = false;
 
-        foreach ($this->timestampMap as $currentNode => $currentTimestamps) {
-            if (!$currentTimestamps->isEqualTo($otherTimestamps[$currentNode])) {
-                $hasDifferentTimestamps = true;
+        foreach ($this->timestamps as $currentNode => $currentTimestamp) {
+            if (!$currentTimestamp->isEqualTo($otherClockTimestamps[$currentNode])) {
+                $hasDifferentTimestamp = true;
                 break;
             }
         }
 
-        return $hasDifferentTimestamps ? ClockOrder::CONCURRENT : ClockOrder::IDENTICAL;
+        return $hasDifferentTimestamp ? ClockOrder::CONCURRENT : ClockOrder::IDENTICAL;
     }
 
     /**
-     * @throws UnComparableException
+     * @throws IncomparableException
      */
     public function isIdenticalTo(self $clock): bool
     {
         $comparison = $this->compare($clock);
 
         if (ClockOrder::NOT_COMPARABLE === $comparison) {
-            throw new UnComparableException();
+            throw new IncomparableException();
         }
 
         return ClockOrder::IDENTICAL === $comparison;
     }
 
     /**
-     * @throws UnComparableException
+     * @throws IncomparableException
      */
     public function happenBefore(self $clock): bool
     {
         $comparison = $this->compare($clock);
 
         if (ClockOrder::NOT_COMPARABLE === $comparison) {
-            throw new UnComparableException();
+            throw new IncomparableException();
         }
 
         return ClockOrder::HAPPEN_BEFORE === $comparison;
     }
 
     /**
-     * @throws UnComparableException
+     * @throws IncomparableException
      */
     public function happenAfter(self $clock): bool
     {
         $comparison = $this->compare($clock);
 
         if (ClockOrder::NOT_COMPARABLE === $comparison) {
-            throw new UnComparableException();
+            throw new IncomparableException();
         }
 
         return ClockOrder::HAPPEN_AFTER === $comparison;
     }
 
+    /**
+     * @throws IncomparableException
+     */
     public function isConcurrentWith(self $clock): bool
     {
         $comparison = $this->compare($clock);
 
         if (ClockOrder::NOT_COMPARABLE === $comparison) {
-            throw new UnComparableException();
+            throw new IncomparableException();
         }
 
         return ClockOrder::CONCURRENT === $comparison;
@@ -101,14 +104,14 @@ class AsyncVectorClock extends AbstractVectorClock
 
     public function applyLocalEvent(): self
     {
-        $this->incrementNode();
+        $this->tick();
 
         return $this;
     }
 
     public function applySendEvent(): self
     {
-        $this->incrementNode();
+        $this->tick();
 
         return $this;
     }
@@ -125,7 +128,7 @@ class AsyncVectorClock extends AbstractVectorClock
 
         $this->ensureNodeIsInVector($clock->getNode());
 
-        $this->incrementNode();
+        $this->tick();
 
         $this->mergeClock($clock);
 
@@ -137,20 +140,20 @@ class AsyncVectorClock extends AbstractVectorClock
      */
     private function canBeCompared(self $clock): bool
     {
-        $clockTimestamps = $clock->getTimestamps();
+        $otherClockTimestamps = $clock->getTimestamps();
 
-        if (count($this->timestampMap) !== count($clockTimestamps)) {
+        if (count($this->timestamps) !== count($otherClockTimestamps)) {
             return false;
         }
 
-        if (!empty(array_diff_key($this->timestampMap, $clockTimestamps))) {
+        if (!empty(array_diff_key($this->timestamps, $otherClockTimestamps))) {
             return false;
         }
 
         // This is an invalid state, two clocks on the same node, with equal timestamp for their node, must have the same vector
-        if ($this->hasSameNode($clock) && $this->timestampMap[$this->node]->isEqualTo($clockTimestamps[$this->node])) {
-            foreach ($this->timestampMap as $currentNode => $currentTimestamp) {
-                if (!$clockTimestamps[$currentNode]->isEqualTo($currentTimestamp)) {
+        if ($this->hasSameNode($clock) && $this->timestamps[$this->node]->isEqualTo($otherClockTimestamps[$this->node])) {
+            foreach ($this->timestamps as $currentNode => $currentTimestamp) {
+                if (!$otherClockTimestamps[$currentNode]->isEqualTo($currentTimestamp)) {
                     return false;
                 }
             }
@@ -161,16 +164,17 @@ class AsyncVectorClock extends AbstractVectorClock
 
     private function mergeClock(self $clock): void
     {
-        $otherTimestampsMap = $clock->getTimestamps();
+        $otherClockTimestamps = $clock->getTimestamps();
 
-        if ($this->timestampMap[$clock->getNode()]->getValue() <= $otherTimestampsMap[$clock->getNode()]->getValue()) {
-            $this->setVectorElementValue($clock->getNode(), 1 + $otherTimestampsMap[$clock->getNode()]->getValue());
+        if ($this->timestamps[$clock->getNode()]->getValue() <= $otherClockTimestamps[$clock->getNode()]->getValue()) {
+            $this->setNodeValue($clock->getNode(), 1 + $otherClockTimestamps[$clock->getNode()]->getValue());
         }
 
-        foreach ($this->timestampMap as $currentNode => $currentTimestamp) {
-            $otherTimestamps = $otherTimestampsMap[$currentNode] ?? null;
-            if ($otherTimestamps && $otherTimestamps->getValue() > $currentTimestamp->getValue()) {
-                $this->setVectorElementValue($currentNode, $otherTimestamps->getValue());
+        foreach ($this->timestamps as $currentNode => $currentTimestamp) {
+            $otherClockCurrentTimestamp = $otherClockTimestamps[$currentNode] ?? null;
+
+            if ($otherClockCurrentTimestamp && $otherClockCurrentTimestamp->getValue() > $currentTimestamp->getValue()) {
+                $this->setNodeValue($currentNode, $otherClockCurrentTimestamp->getValue());
             }
         }
     }

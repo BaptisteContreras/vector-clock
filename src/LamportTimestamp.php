@@ -12,7 +12,7 @@ class LamportTimestamp
      */
     public function __construct(private int $value = 0)
     {
-        if (0 > $this->value) {
+        if ($this->value < 0) {
             throw new InvalidInitValueException(self::class);
         }
     }

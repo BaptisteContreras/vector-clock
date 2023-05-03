@@ -6,6 +6,6 @@ class ClockIsNotIdleException extends \Exception
 {
     public function __construct()
     {
-        parent::__construct('The clock is waiting to be sync'); // TODO rephrase this
+        parent::__construct('The clock is in communication with another clock');
     }
 }

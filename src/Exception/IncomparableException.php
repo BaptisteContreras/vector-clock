@@ -2,7 +2,7 @@
 
 namespace Dynamophp\VectorClock\Exception;
 
-class UnComparableException extends \Exception
+class IncomparableException extends \Exception
 {
     public function __construct()
     {

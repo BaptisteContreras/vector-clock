@@ -11,7 +11,7 @@ class LogicalTimestamp
      */
     public function __construct(private readonly int $counter)
     {
-        if (0 > $this->counter) {
+        if ($this->counter < 0) {
             throw new InvalidInitValueException(self::class);
         }
     }

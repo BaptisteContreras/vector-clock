@@ -10,16 +10,16 @@ use Dynamophp\VectorClock\Exception\UnknownNodeException;
 abstract class AbstractVectorClock
 {
     /**
-     * @param array<string, LogicalTimestamp> $timestampMap
+     * @param array<string, LogicalTimestamp> $timestamps
      *
      * @throws NumericNodeNameException
      * @throws InvalidNodeNameException
      * @throws InvalidVectorClockStateException
      */
-    public function __construct(protected readonly string $node, protected array $timestampMap = [])
+    public function __construct(protected readonly string $node, protected array $timestamps = [])
     {
-        if (!isset($this->timestampMap[$this->node])) {
-            $this->timestampMap[$this->node] = LogicalTimestamp::init();
+        if (!isset($this->timestamps[$this->node])) {
+            $this->timestamps[$this->node] = LogicalTimestamp::init();
         }
 
         $this->validateInitialState();
@@ -33,8 +33,8 @@ abstract class AbstractVectorClock
     {
         $this->validateNode($node);
 
-        if (!isset($this->timestampMap[$node])) {
-            $this->timestampMap[$node] = LogicalTimestamp::init();
+        if (!isset($this->timestamps[$node])) {
+            $this->timestamps[$node] = LogicalTimestamp::init();
 
             return true;
         }
@@ -45,7 +45,7 @@ abstract class AbstractVectorClock
     public function removeNode(string $node): bool
     {
         if ($node !== $this->node && $this->isNodeInVector($node)) {
-            unset($this->timestampMap[$node]);
+            unset($this->timestamps[$node]);
 
             return true;
         }
@@ -63,7 +63,7 @@ abstract class AbstractVectorClock
      */
     public function getTimestamps(): array
     {
-        return $this->timestampMap;
+        return $this->timestamps;
     }
 
     /**
@@ -88,7 +88,7 @@ abstract class AbstractVectorClock
      */
     protected function validateInitialState(): void
     {
-        foreach ($this->timestampMap as $node => $timestamp) {
+        foreach ($this->timestamps as $node => $timestamp) {
             $this->validateNode($node);
 
             if (!$timestamp instanceof LogicalTimestamp) {
@@ -97,24 +97,24 @@ abstract class AbstractVectorClock
         }
     }
 
-    protected function incrementNode(): void
+    protected function tick(): void
     {
-        $this->incrementVectorElement($this->node);
+        $this->incrementNodeValue($this->node);
     }
 
-    protected function incrementVectorElement(string $node): void
+    protected function incrementNodeValue(string $node): void
     {
-        $this->timestampMap[$node] = $this->timestampMap[$node]->increment();
+        $this->timestamps[$node] = $this->timestamps[$node]->increment();
     }
 
-    protected function setVectorElementValue(string $node, int $value): void
+    protected function setNodeValue(string $node, int $value): void
     {
-        $this->timestampMap[$node] = new LogicalTimestamp($value);
+        $this->timestamps[$node] = new LogicalTimestamp($value);
     }
 
     protected function isNodeInVector(string $node): bool
     {
-        return isset($this->timestampMap[$node]);
+        return isset($this->timestamps[$node]);
     }
 
     /**
