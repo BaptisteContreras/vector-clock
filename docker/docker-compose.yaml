@@ -2,8 +2,8 @@ version: '2'
 
 services:
   vector-clock-php:
-    image: 'bitnami/php-fpm:8.1'
+    image: 'webdevops/php-dev:8.1-alpine'
     volumes:
       - ../.:/app
-      - ./php/custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini
+      - ./php/custom.ini:/opt/docker/etc/php/php.ini
     restart: unless-stopped
