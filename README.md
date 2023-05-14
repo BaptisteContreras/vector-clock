@@ -12,6 +12,12 @@ These implementations carefully follow the research paper and all classes are fu
 
 Every example present in the paper is transcribed as a Phpunit test.
 
+## Installation
+
+```bash
+composer require dynamophp/vector-clock
+```
+
 ## Lamport timestamp
 
 ### Usage
